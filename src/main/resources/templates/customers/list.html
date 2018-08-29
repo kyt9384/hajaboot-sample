@@ -1,85 +1,174 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head lang="en">
-    <meta charset="UTF-8"/>
-    <title>고객 목록</title>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
-          th:href="@{/webjars/bootstrap/3.3.4/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
-          th:href="@{/webjars/bootstrap/3.3.4/css/bootstrap-theme.min.css}"/>
-</head>
-<body>
-<div class="container">
-    <h1>고객 관리 시스템</h1>
-    <p>
-        <span sec:authentication="principal.user.username">duke</span>님이 로그인 상태
-        <a th:href="@{/logout}" class="btn btn-default btn-xs">로그 아옷</a>
-    </p>
-    <div class="col-sm-12">
-        <form th:action="@{/customers/create}" th:object="${customerForm}" class="form-horizontal" method="post">
-            <fieldset>
-                <legend>고객 정보 작성</legend>
-                <div class="form-group" th:classappend="${#fields.hasErrors('lastName')}? 'has-error has-feedback'">
-                    <label for="lastName" class="col-sm-2 control-label">성</label>
 
-                    <div class="col-sm-10">
-                        <input type="text" id="lastName" name="lastName" th:field="*{lastName}"
-                               class="form-control" value="홍"/>
-                        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
-                              class="help-block">error!</span>
-                    </div>
-                </div>
-                <div class="form-group" th:classappend="${#fields.hasErrors('firstName')}? 'has-error has-feedback'">
-                    <label for="firstName" class="col-sm-2 control-label">이름</label>
+  <head>
 
-                    <div class="col-sm-10">
-                        <input type="text" id="firstName" name="firstName" th:field="*{firstName}"
-                               class="form-control" value="길동"/>
-                        <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
-                              class="help-block">error!</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary">작성</button>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-        <hr/>
-        <table class="table table-striped table-bordered table-condensed">
-            <tr>
-                <th>ID</th>
-                <th>성</th>
-                <th>이름</th>
-                <th>담당자</th>
-                <th colspan="2">편집</th>
-            </tr>
-            <tr th:each="customer : ${customers}">
-                <td th:text="${customer.id}">100</td>
-                <td th:text="${customer.lastName}">홍</td>
-                <td th:text="${customer.firstName}">길동</td>
-                <td th:text="${customer.user.username}">duke</td>
-                <td>
-                    <form th:action="@{/customers/edit}" method="get">
-                        <input class="btn btn-default" type="submit" name="form" value="편집"/>
-                        <input type="hidden" name="id" th:value="${customer.id}"/>
-                    </form>
-                </td>
-                <td>
-                    <form th:action="@{/customers/delete}" method="post">
-                        <input class="btn btn-danger" type="submit" value="삭제"/>
-                        <input type="hidden" name="id" th:value="${customer.id}"/>
-                    </form>
-                </td>
-            </tr>
-        </table>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" /> 
+
+    <title>공기청정기 모니터링 시스템</title>
+
+    <!-- Bootstrap core CSS-->
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
+
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css" />
+
+    <!-- Page level plugin CSS-->
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet" />
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/sb-admin.css}" rel="stylesheet" />
+
+  </head>
+
+  <body id="page-top">
+
+    <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
+
+      <a class="navbar-brand mr-1" th:action="@{/customers}">공기청정기 모니터링 시스템</a>
+
+      <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" th:href="@{/customers}">
+        <i class="fas fa-bars"></i>
+      </button>
+
+    </nav>
+
+    <div id="wrapper">
+
+      <!-- Sidebar -->
+      <ul class="sidebar navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" th:action="@{/customers}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>대시보드</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:action="@{/customers}">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>그래프</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:aciton="@{/customers}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>테이블</span></a>
+        </li>
+      </ul>
+
+      <div id="content-wrapper">
+
+        <div class="container-fluid">
+
+          <!-- Breadcrumbs-->
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a th:href="@{/customers}">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">Overview</li>
+          </ol>
+
+          <!-- Area Chart Example-->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-chart-area"></i>
+              온·습도 현황</div>
+            <div class="countsort">
+              <iframe width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiYzIzNDY3OGItMGE1OC00MzU3LWJkNDItYzU4NDAyYTJmMjMzIiwidCI6IjliMTI5ZGRkLWY0YzctNDY2YS04YzhlLWUyYTAyN2Q5YzhmNyIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true" class="video"></iframe>
+            </div>
+            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM(실시간x 실시간으로 수정해야됨)</div>
+          </div>
+
+          <!-- DataTables Example -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-table"></i>
+              Data Table Example</div>
+            <div class="card-body">
+              <div class="table-responsive">
+                  <div class="countsort">
+                    <iframe width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiNjM3ZDhhOGYtNDMzZS00MGE2LWFiMWEtZTNkNmY3MTgwZGE3IiwidCI6IjliMTI5ZGRkLWY0YzctNDY2YS04YzhlLWUyYTAyN2Q5YzhmNyIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true" class="video"></iframe> 
+                  </div>
+              </div>
+            </div>
+            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header">
+              <i class="fas fa-chart-area"></i>
+              온·습도 현황</div>
+            <div class="countsort">
+              <iframe width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiZWM0NDU4MjAtZjgzOS00OThlLWE0NjgtYTViZmY2ZTg2OTIxIiwidCI6IjliMTI5ZGRkLWY0YzctNDY2YS04YzhlLWUyYTAyN2Q5YzhmNyIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>
+            </div>
+            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM(실시간x 실시간으로 수정해야됨)</div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+        <!-- Sticky Footer -->
+        <footer class="sticky-footer">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright © NSTL 2018</span>
+            </div>
+          </div>
+        </footer>
+
+      </div>
+      <!-- /.content-wrapper -->
+
     </div>
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"
-        th:src="@{/webjars/jquery/1.11.3/jquery.min.js}"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"
-        th:src="@{/webjars/bootstrap/3.3.4/js/bootstrap.min.js}"></script>
-</body>
+    <!-- /#wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" th:href="@{/customers}">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <!-- Page level plugin JavaScript-->
+    <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+    <script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/sb-admin.min.js}"></script>
+
+    <!-- Demo scripts for this page-->
+    <script th:src="@{/js/demo/datatables-demo.js}"></script>
+    <script th:src="@{/js/demo/chart-area-demo.js}"></script>
+
+  </body>
+
 </html>
