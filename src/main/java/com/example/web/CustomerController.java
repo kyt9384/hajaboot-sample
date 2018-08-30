@@ -74,6 +74,19 @@ public class CustomerController {
 		return "redirect:/customers";
 	}
 	
+	// 여기 수정중 시작
+	@RequestMapping(value = "charts", method = RequestMethod.GET)
+	String charts() {
+		return "customers/charts";
+	}
+	
+	@RequestMapping(value = "tables", method = RequestMethod.GET)
+	String tables() {
+		return "customers/tables";
+	}
+	
+	// 여기 수정중 끝
+	
 	@RequestMapping(value= "delete", method = RequestMethod.POST)
 	String edit(@RequestParam Integer id) {
 		customerService.delete(id);
